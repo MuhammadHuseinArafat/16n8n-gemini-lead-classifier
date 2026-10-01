@@ -1,0 +1,175 @@
+{
+  "name": "16. AI-Powered Lead Qualification & Sentiment Analysis Automation",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "32f23a18-e54e-4f2c-b211-daca73dcab3c",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "81547598-7a06-467e-b037-19680746b630",
+              "name": "pesanKlien",
+              "value": "\"Halo, perusahaan kami butuh integrasi sistem otomatisasi n8n untuk 5 cabang sekaligus. Tolong hubungi kami segera, budget sudah disiapkan.\"",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        224,
+        0
+      ],
+      "id": "d7ffe58f-5cb7-41cb-97f4-41ab90c3bc21",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Analisis pesan berikut: {{ $json.pesanKlien }}",
+        "messages": {
+          "messageValues": [
+            {
+              "message": "\"Kamu adalah AI Lead Qualification Engine. Tugasmu adalah menganalisis pesan dari calon klien, lalu mengklasifikasikannya ke dalam format teks sederhana: Kategori Lead (Hot/Warm/Cold), Estimasi Budget (Ada/Tidak Ada), dan Ringkasan Kebutuhan.\""
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        448,
+        0
+      ],
+      "id": "f950a5df-edee-4acd-b604-7d19d705eaf0",
+      "name": "Basic LLM Chain"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.2,
+      "position": [
+        672,
+        160
+      ],
+      "id": "ca64ed8d-9c60-4267-8962-5cefb05924e7",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": null,
+          "name": "",
+          "__aiGatewayManaged": true
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "fa731958-e70b-4ab9-8c16-bdb9a9a8d0f0",
+              "leftValue": "={{ $json.text }}",
+              "rightValue": "Hot",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        816,
+        0
+      ],
+      "id": "d8762c73-7822-4c2d-8570-11089f09aa97",
+      "name": "If"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": true
+  },
+  "versionId": "9cdaaecd-4c02-49ac-9874-9a4c8c073f09",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "78020135ce1e18d23f1d2826518029bcddfec44dbf18b7fe235e495f881aa588"
+  },
+  "nodeGroups": [],
+  "id": "Gp1hzsj2PluJKDIO",
+  "tags": []
+}
